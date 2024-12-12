@@ -1,9 +1,9 @@
-use std::{ process::exit, time::Instant};
+use std::{ collections::HashMap, process::exit, time::Instant};
 
 fn main() {
     println!("Welcome to Day 11!");
-    // Part 1
 
+    // Part 1
     let mut part_1_stone_arrangement: Vec<u64> = vec![125, 17];
     let part_1_blinks = 6;
 
@@ -20,33 +20,35 @@ fn main() {
     
     // Part 2#
 
-    let mut part_2_stone_arrangement: Vec<u64> = vec![4189, 413, 82070, 61, 655813, 7478611, 0, 8];
-    let part_2_blinks = 25;
+    let part_2_stone_arrangement: Vec<u64> = vec![4189, 413, 82070, 61, 655813, 7478611, 0, 8];
+    let part_2_blinks = 75;
 
     let now = Instant::now();
-    let mut part_2_sum: usize = 0;
-
-    for stone in part_2_stone_arrangement {
-        let mut sum: usize = 0;
-        recursion(stone, 0, part_2_blinks, &mut sum);
-        part_2_sum += sum;
-    }
+    let part_2_sum: u64 = part_2_improved(part_2_stone_arrangement, part_2_blinks);
 
     println!("Part 2 Sum {}", part_2_sum);
     println!("Part 2 Took {:?}", now.elapsed());
     
 }
 
-fn recursion(num: u64, current_blink: u8, total_blink: u8, sum: &mut usize) {
-    if current_blink >= total_blink {
-        *sum += 1;
-        return;
-    } else {
-        let next_stones = find_next_stones(num);
-        for stone in next_stones.iter().copied() {
-            recursion(stone, current_blink + 1, total_blink, sum);
-        }
+fn part_2_improved(nums: Vec<u64>, blinks: u8) -> u64{
+    let mut count_map = HashMap::new();
+
+    for num in nums {
+        *count_map.entry(num).or_insert(0) += 1;
     }
+
+    for i in 0..blinks {
+        let mut next_count_map = HashMap::new();
+        for (key, value) in count_map.iter() {
+            let next_stones = find_next_stones(*key);
+            for stone in next_stones {
+                *next_count_map.entry(stone).or_insert(0) += *value;
+            }
+        }
+        count_map = next_count_map;
+    }
+    return count_map.values().sum();
 }
 
 fn find_next_stones(num: u64) -> Vec<u64> {
