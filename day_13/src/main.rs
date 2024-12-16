@@ -8,7 +8,7 @@ fn main() {
 
   let data_maps = read_file();
 
-  let mut total = 0;
+  let mut total  = 0;
 
   for map in data_maps {
 
@@ -35,7 +35,7 @@ fn main() {
 /// Note: For each case, map "a_x" "b_x" "a_y" "b_y" "prize_x" "prize_y" stored
 /// Length of the vector will be equal to the number of cases found in the file
 /// 
-fn read_file() -> Vec<HashMap<String, i32>> {
+fn read_file() -> Vec<HashMap<String, i128>> {
     let contents  = read_to_string("./src/data.txt")
     .expect("Failed to read data file");
 
@@ -43,7 +43,7 @@ fn read_file() -> Vec<HashMap<String, i32>> {
     let btn_b_regex = regex::Regex::new(r"Button B: X\+(\d+), Y\+(\d+)").unwrap();
     let prize_regex = regex::Regex::new(r"Prize: X=(\d+), Y=(\d+)").unwrap();
 
-    let mut data : Vec<HashMap<String, i32>> = Vec::new();
+    let mut data : Vec<HashMap<String, i128>> = Vec::new();
 
     let mut map = HashMap::new();
     
@@ -71,16 +71,16 @@ fn read_file() -> Vec<HashMap<String, i32>> {
 ///     line: line read from the file
 ///     map: to store the values
 ///     keys: map keys
-fn regex_data_extract(re: &Regex, line: &str, map: &mut HashMap<String, i32>, keys: &(&str, &str)) {
+fn regex_data_extract(re: &Regex, line: &str, map: &mut HashMap<String, i128>, keys: &(&str, &str)) {
     re.captures_iter(line).for_each(|caps| {
-        match &caps[1].parse::<i32>() {
+        match &caps[1].parse::<i128>() {
             Ok(parsed_val) => map.insert(keys.0.to_string(), *parsed_val),
             Err(_e) => {
                 eprintln!("Failed to parse value for key '{}'", &caps[1]);
                 std::process::exit(1);
             },
         };
-        match &caps[2].parse::<i32>() {
+        match &caps[2].parse::<i128>() {
             Ok(parsed_val) => map.insert(keys.1.to_string(), *parsed_val),
             Err(_e) => {
                 eprintln!("Failed to parse value for key '{}'", &caps[2]);
@@ -103,7 +103,7 @@ fn regex_data_extract(re: &Regex, line: &str, map: &mut HashMap<String, i32>, ke
 ///     prize_x: X coordinate of the prize
 ///     prize_x: Y coordinate of the prize
 /// 
-/// Returns: i32
+/// Returns: i128
 ///     0 - when button presses less than 100 cannot be found
 ///     else, cost - tokens to reach the prize
 /// 
@@ -111,12 +111,12 @@ fn regex_data_extract(re: &Regex, line: &str, map: &mut HashMap<String, i32>, ke
 /// Cost is 3 for Button A
 /// Cost is 1 for Button B
 /// 
-fn find_min_button_presses(a_x: i32, a_y: i32, b_x: i32, b_y: i32, prize_x_coord: i32, prize_y_coord: i32) -> i32 {
-    let mut btn_a_min_press: i32 = 1;
-    let mut btn_b_min_press: i32 = 1;
+fn find_min_button_presses(a_x: i128, a_y: i128, b_x: i128, b_y: i128, prize_x_coord: i128, prize_y_coord: i128) -> i128 {
+    let mut btn_a_min_press: i128 = 1;
+    let mut btn_b_min_press: i128 = 1;
 
-    const BTN_A_TOKENS: i32 = 3;
-    const BTN_B_TOKENS: i32 = 1;
+    const BTN_A_TOKENS: i128 = 3;
+    const BTN_B_TOKENS: i128 = 1;
 
     let mut solved = false;
 
